@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ant-design/cssinjs": "^1.18.4",
     "dotenv": "^16.4.1",
     "js-moi-sdk": "^0.2.1-rc1"
   }

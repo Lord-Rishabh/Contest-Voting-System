@@ -9,6 +9,7 @@ class Contest:
     field contestName String        // Name of the contest
     field entries Map[String]U64    // Mapping of Name=>Votes
     field endTime U64               // Timestamp indicating when the contest ends
+    field votes Map[Address]U64   // To see if the user has already voted
     field winner String          // Address of the winning entry's creator (nullable)
     field ended Bool                // Flag indicating whether the contest has ended
 
@@ -56,18 +57,22 @@ endpoint invokable SubmitEntry!(contestId U64, Name String):
 // Vote for an entry in a contest
 endpoint invokable VoteForEntry!(contestId U64, Name String):
     var contest Contest
+    var user Address = Address(Sender)
     observe contests <- ContestPlatform.State.contests:
         contest = contests[contestId]
     // Check if the contest has not ended
-    if(contest.ended == true):
-        throw "Contest has been ended"
+        if(contest.ended == true):
+            throw "Contest has been ended"
+        if(contest.votes[user] == 1):
+            throw "You have already Voted for this Contest"
         
     // Find the entry with entryId in the contest's entries array
     // Increment the votes for the entry by 1
     mutate currContest <- ContestPlatform.State.contests:
+        currContest[contestId].votes[user] = 1
         currContest[contestId].entries[Name] += 1
 
-// End a contest and determine the winner
+// End a contest 
 endpoint invokable EndContest!(contestId U64):
     var contest Contest
     observe contests <- ContestPlatform.State.contests:
