@@ -1,0 +1,100 @@
+// Coco ContestPlatform
+coco ContestPlatform
+state persistent:
+    contests []Contest
+    owner Address
+
+class Contest: 
+    field contestId U64             // Unique identifier for each contest
+    field contestName String        // Name of the contest
+    field entries Map[String]U64    // Mapping of Name=>Votes
+    field endTime U64               // Timestamp indicating when the contest ends
+    field winner String          // Address of the winning entry's creator (nullable)
+    field ended Bool                // Flag indicating whether the contest has ended
+
+////////////////////////
+// Mutate Endpoints
+///////////////////////
+
+// Note: "!" required as suffix for mutate endpoints
+
+endpoint deployer Init!():
+    mutate Address(Sender) -> ContestPlatform.State.owner
+
+// Create a new contest
+endpoint invokable CreateContest!(contestName String, durationInSeconds U64)->(CreatedContest Contest):
+    // Check if durationInSeconds is greater than 0
+    if(durationInSeconds <= 0 ):
+        throw "Time Ended"
+    // Update endTime by adding durationInSeconds to the current timestamp
+    mutate contests <- ContestPlatform.State.contests:
+        var tempTime U64 = U64(Env.Timestamp())
+        var newContest = Contest{contestId: len(contests), contestName: contestName, endTime: tempTime +  durationInSeconds, winner: "", ended: false}
+        contests = append(contests, newContest)
+        yield CreatedContest newContest
+    // Add new contest to the list by incrementing the contestId and appending to contests array
+    // Yield the created contest to the caller
+
+// Submit an entry to a contest
+endpoint invokable SubmitEntry!(contestId U64, Name String):
+    var contest Contest
+    observe contests <- ContestPlatform.State.contests:
+        contest = contests[contestId]
+
+    // Check if the contest has not ended
+    if(contest.ended == true):
+        throw "Contest has been Ended"    
+
+    // Create a new entry with the provided description, set creator to the sender's address, and initialize votes to 0
+    
+    mutate currContest <- ContestPlatform.State.contests: 
+    // Append the new entry to the contest's entries array
+        var mp = Map[String]U64{Name: 0}
+        currContest[contestId].entries[Name] = 0
+
+
+// Vote for an entry in a contest
+endpoint invokable VoteForEntry!(contestId U64, Name String):
+    var contest Contest
+    observe contests <- ContestPlatform.State.contests:
+        contest = contests[contestId]
+    // Check if the contest has not ended
+    if(contest.ended == true):
+        throw "Contest has been ended"
+        
+    // Find the entry with entryId in the contest's entries array
+    // Increment the votes for the entry by 1
+    mutate currContest <- ContestPlatform.State.contests:
+        currContest[contestId].entries[Name] += 1
+
+// End a contest and determine the winner
+endpoint invokable EndContest!(contestId U64):
+    var contest Contest
+    observe contests <- ContestPlatform.State.contests:
+        contest = contests[contestId]
+
+    // Check if the contest has already ended
+    if(contest.ended == true):
+        throw "Contest has been Ended"
+    // Check if the contest has not ended yet
+    if(contest.endTime < U64(Env.Timestamp())):
+        throw "Contest has been Ended"
+    // Determine the winner based on the entry with the highest number of votes
+    
+
+    // Update the winner field with the address of the winning entry's creator
+    mutate currContest <- ContestPlatform.State.contests:
+
+    // Update ended flag to true
+        currContest[contestId].ended = true
+
+////////////////////////
+// Observe Endpoints
+///////////////////////
+
+// Note: No "!" required as suffix for observe endpoints
+
+// Get all contests
+endpoint invokable GetContests()->(contests []Contest):
+    // Observe contests from the persistent state and yield
+    observe contests <- ContestPlatform.State.contests

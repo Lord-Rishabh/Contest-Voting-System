@@ -1,0 +1,15 @@
+{
+  "name": "moi-starter-logic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.1",
+    "js-moi-sdk": "^0.2.1-rc1"
+  }
+}
