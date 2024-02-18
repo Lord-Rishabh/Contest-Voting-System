@@ -37,7 +37,6 @@ const EndContest = async (wallet, contestId) => {
   return ixResponse.result();
 };
 
-
 const GetContests = async () => {
   const logicDriver = await getLogicDriver(logicId, baseWallet);
   return logicDriver.routines.GetContests();

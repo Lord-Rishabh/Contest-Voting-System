@@ -25,7 +25,9 @@ const deployLogic = async () => {
 
   const VotingSystemLogic = new LogicFactory(VotingSystemManifest, wallet);
   // Submitting the Interaction to the network to deploy the logic
-  const ixResponse = await VotingSystemLogic.deploy("Init!");
+  const ixResponse = await VotingSystemLogic.deploy("Init!", {
+    fuelLimit: 5000,
+  });
   console.log("------ Deploying Logic ----------");
   console.log(ixResponse);
 
