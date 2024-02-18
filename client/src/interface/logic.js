@@ -31,7 +31,11 @@ const VoteForEntry = async (wallet, contestId, Name) => {
   const ixResponse = await logicDriver.routines.VoteForEntry(contestId, Name);
   return ixResponse.result();
 };
-
+const EndContest = async (wallet, contestId) => {
+  const logicDriver = await getLogicDriver(logicId, wallet);
+  const ixResponse = await logicDriver.routines.EndContest(contestId);
+  return ixResponse.result();
+};
 
 
 const GetContests = async () => {
