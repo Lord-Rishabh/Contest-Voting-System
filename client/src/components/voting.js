@@ -25,9 +25,7 @@ const Voting = ({ handleCreateContest, handleSubmitEntry }) => {
         try {
             await handleCreateContest(contestDetails.contestName, contestDetails.endTimeInSeconds);
             toastSuccess("Contest Created Successfully");
-            console.log("contest created successfully");
         } catch (e) {
-            console.log(e);
             toastError("Something went wrong");
         }
         setShowCreateContestForm(!showCreateContestForm);

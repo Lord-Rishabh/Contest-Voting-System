@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import logic from "./interface/logic";
 import './App.css';
 import Contest from './components/Contest';
@@ -24,12 +24,16 @@ function App() {
   };
   const handleCreateContest = async (contestName, durationInSeconds) => {
     try {
-      const createdContest = await logic.CreateContest(wallet, contestName, durationInSeconds);
+      const { createdContest } = await logic.CreateContest(wallet, contestName, durationInSeconds);
 
-      setContests([createdContest, ...contest]);
+      // setContests([createdContest, ...contest]);
+      console.log(" ** " + createdContest + " **");
       toastSuccess("Contest Created successfully");
+      console.log("Contest Created successfully !!!");
+
     } catch (error) {
       toastError(error.message);
+      console.log("Contest not Created !!! : " + error );
     }
   };
   const handleSubmitEntry = async (Name, contestId) => {
@@ -48,11 +52,9 @@ function App() {
   const getContest = async () => {
     try {
 
-      const { currContests } = await logic.GetContests();
-      console.log(currContests);
-      currContests.reverse();
+      let { currContests } = await logic.GetContests();
       setContests(currContests);
-      console.log("contest");
+      console.log(contest);
 
     } catch (error) {
       console.log("error" + error.message);
@@ -83,11 +85,7 @@ function App() {
       <div className="p-9 pt-0">
         <Contest />
       </div>
-      <div className='text-white'>
-      {contest.map((contests) => (
-        <li>{contests.contestName}</li>
-        ))}
-      </div>
+      
     </>
   );
 }
