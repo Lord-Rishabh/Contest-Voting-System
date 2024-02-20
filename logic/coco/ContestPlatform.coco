@@ -42,8 +42,11 @@ endpoint invokable CreateContest!(name String, description String, durationInSec
         throw "Description Too Long"
     if(durationInSeconds <= 0 ):
         throw "Invalid duration"
-
+    var lenOfContests U64
+    observe contests <- ContestPlatform.State.contests:
+        lenOfContests = len(contests)
     var newContest = Contest{
+        id: lenOfContests,
         name: name,
         description: description,
         creator: creator,
@@ -85,6 +88,9 @@ endpoint invokable VoteForEntry!(contestId U64, entryName String):
     mutate contests <- ContestPlatform.State.contests:
         contests[contestId].voters[voter] = true
         contests[contestId].entries[entryName].votes += 1
+        if(contests[contestId].highestVoted.votes < contests[contestId].entries[entryName].votes) :
+            contests[contestId].highestVoted.votes = contests[contestId].entries[entryName].votes
+            contests[contestId].highestVoted.entryName = entryName
 
 
 ////////////////////////
@@ -96,5 +102,17 @@ endpoint invokable VoteForEntry!(contestId U64, entryName String):
 // Get all contests
 endpoint invokable GetContests()->(contests []Contest):
     observe contests <- ContestPlatform.State.contests
+
+endpoint invokable GetParticularContest(contestId U64)->(contest Contest):
+    observe contests <- ContestPlatform.State.contests:
+        contest = contests[contestId]
+
+endpoint invokable GetWinner(contestId U64)->(entryName String):
+    var contest Contest
+    observe contests <- ContestPlatform.State.contests:
+        contest = contests[contestId]
+        if(contest.endTime > Env.Timestamp()):
+            throw "Contest has not been Ended"
+        entryName = contests[contestId].highestVoted.entryName
 
 

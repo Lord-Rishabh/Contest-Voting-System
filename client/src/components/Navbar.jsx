@@ -29,7 +29,7 @@ const Navbar = ({ updateWallet, showConnectModal, wallet }) => {
       <div className="nav__header">
         {/* Design Element  */}
         <div
-          className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]"
+          className="fixed inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]"
           aria-hidden="true"
         >
           <div

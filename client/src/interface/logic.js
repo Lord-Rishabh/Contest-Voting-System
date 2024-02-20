@@ -49,12 +49,22 @@ const GetContests = async () => {
   const logicDriver = await getLogicDriver(logicId, baseWallet);
   return logicDriver.routines.GetContests();
 };
+const GetParticularContest = async (contestId) => {
+  const logicDriver = await getLogicDriver(logicId, baseWallet);
+  return logicDriver.routines.GetParticularContest(contestId);
+};
+const GetWinner = async (contestId) => {
+  const logicDriver = await getLogicDriver(logicId, baseWallet);
+  return logicDriver.routines.GetWinner(contestId);
+};
 
 const logic = {
   CreateContest,
   SubmitEntry,
   VoteForEntry,
   GetContests,
+  GetParticularContest,
+  GetWinner,
 };
 
 export default logic;
