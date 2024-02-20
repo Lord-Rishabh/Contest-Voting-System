@@ -1,14 +1,17 @@
 import React, { useState } from 'react';
-
+import Loader from '../components/Loader';
 const CreateContest = ({handleCreateContest}) => {
   const [contestName, setContestName] = useState('');
   const [contestDescription, setContestDescription] = useState('');
   const [contestDuration, setContestDuration] = useState('');
+  const [isLoading, setIsLoading] = useState(false); 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true); // Set loading state to true
     // Handle form submission here
     await handleCreateContest(contestName, contestDescription, contestDuration);
+    setIsLoading(false); // Set loading state to false after contest creation
   };
 
   return (
@@ -55,8 +58,9 @@ const CreateContest = ({handleCreateContest}) => {
           <button
             type="submit"
             className="bg-[#7e22ce] hover:bg-[#9d57d9] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full"
+            disabled={isLoading} // Disable button when loading
           >
-            Create Contest
+            {isLoading ? <Loader color={"#000"} loading={isLoading} /> : 'Create Contest'} {/* Show different text based on loading state */}
           </button>
         </form>
       </div>

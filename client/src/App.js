@@ -10,6 +10,7 @@ import Contest from "./pages/Contest";
 import Contests from "./pages/Contests";
 import Home from "./pages/Home";
 import { Toaster } from "react-hot-toast";
+import Spinner from "./components/Spinner";
 
 function App() {
   const [wallet, setWallet] = useState();
@@ -56,7 +57,7 @@ function App() {
         durationInSeconds
       );
       setContests([createdContest, ...contest]);
-      console.log(createdContest);
+      toastSuccess("Contest Created Successfully");
     } catch (error) {
       toastError(error.message);
     }
@@ -140,7 +141,9 @@ console.log(entryName);
             handleDeclareWinner={handleDeclareWinner}
           />} />
         )}
-        <Route path="*" element={<Home />} />
+        
+        {/* Change this show something else when a page is loading. */}
+        <Route path="*" element={<Spinner />} />
       </Routes>
 
     </>
