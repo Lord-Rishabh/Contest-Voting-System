@@ -16,6 +16,7 @@ const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handl
     e.preventDefault();
     // Convert End Time to seconds
     try {
+      console.log("contest id ---->" + contestId + " <-----")
       await handleSubmitEntry(entryDetails.entryName, contestId);
       toastSuccess("Entry Submitted Successfully");
       console.log("Entry Submitted successfully");

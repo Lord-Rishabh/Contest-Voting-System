@@ -63,14 +63,14 @@ function App() {
     getContests();
   };
 
-  const handleSubmitEntry = async (contestId, contestName) => {
+  const handleSubmitEntry = async (entryName, contestId) => {
+    console.log("contest id ----> ^^" + contestId + " " + entryName +  "^^ <-----")
     try {
       if (!wallet) return showConnectModal(true);
-
-      await logic.SubmitEntry(wallet, contestId, contestName);
-      console.log("Entry Submitted Successfully")
+      await logic.SubmitEntry(wallet, contestId, entryName);
+      console.log("Entry Submitted Successfully" + "id : " + contestId);
     } catch (error) {
-      console.log("** " + error);
+      console.log("** " + error + "id : " + contestId);
       toastError(error.message);
     }
   };
