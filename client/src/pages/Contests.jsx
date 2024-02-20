@@ -1,16 +1,19 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Contests = ({ contests, wallet, showConnectModal, setContestName, setContestDesc, setPContestEntries }) => {
+const Contests = ({ contests, wallet, showConnectModal, setPContestDetails }) => {
   const navigate = useNavigate(); // move useNavigate inside the component body
 
-  const handleSubmitEntry = async (contestId, contestName, contestDescription, contestEntries) => {
+  const handleSubmitEntry = async (contestId, contestName, contestDescription, contestEntries, contestEndtime) => {
     try {
       if (!wallet) return showConnectModal(true);
       // Construct the URL with contestId and navigate to it
-      setContestName(contestName);
-      setContestDesc(contestDescription);
-      setPContestEntries(contestEntries)
+      setPContestDetails({
+        name: contestName,
+        desc: contestDescription,
+        endTime: contestEndtime,
+        entries: contestEntries,
+      })
       navigate(`/contests/${contestId}`);
     } catch (error) {
       console.log(error.message);
@@ -27,7 +30,7 @@ const Contests = ({ contests, wallet, showConnectModal, setContestName, setConte
               <h3 className="text-lg font-semibold text-white mb-2">Name: {contest.name}</h3>
               <p className="text-gray-400 text-sm mb-2">Description: {contest.description}</p>
               <p className="text-gray-400 text-sm">End Time: {formatTime(contest.endTime)}</p>
-              <button className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none"  onClick={() => handleSubmitEntry(contest.id, contest.name, contest.description,contest.entries)} >
+              <button className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none" onClick={() => handleSubmitEntry(contest.id, contest.name, contest.description, contest.entries, contest.endtIme)} >
                 Go to Voting
               </button>
             </div>
