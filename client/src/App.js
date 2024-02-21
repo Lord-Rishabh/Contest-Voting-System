@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
-import logic from "./interface/logic";
-import Navbar from "./components/Navbar";
-import ConnectModal from "./components/ConnectModal";
+import { Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import { toastError, toastSuccess } from "./components/utils/toastWrapper";
 import "./App.css";
-import { Route, Routes } from "react-router-dom";
-import CreateContest from "./pages/CreateContest";
-import Contest from "./pages/Contest";
-import Contests from "./pages/Contests";
+import Navbar from "./components/Navbar";
+import ConnectModal from "./components/ConnectModal";
 import Home from "./pages/Home";
-import { Toaster } from "react-hot-toast";
+import CreateContest from "./pages/CreateContest";
+import Contests from "./pages/Contests";
+import Contest from "./pages/Contest";
+import WinnerCard from "./components/WinnerCard";
+import logic from "./interface/logic";
 import Spinner from "./components/Spinner";
 
 function App() {
@@ -17,7 +18,8 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contest, setContests] = useState([]);
   const [isContestsLoaded, setIsContestsLoaded] = useState(false);
-
+  const [winner, setWinner] = useState("")
+  const [showWinner, setShowWinner] = useState(false);
   // For particular contest to be shown at contest.jsx
   const [pContestDetails, setPContestDetails] = useState({
     name: "",
@@ -37,13 +39,35 @@ function App() {
     setIsModalOpen(value);
   };
 
-
+  // To get all contests
   const getContests = async () => {
     setIsContestsLoaded(false);
-    const { contests } = await logic.GetContests();
-    setContests([contests, ...contest]);
-    console.log(contests);
+    try {
+      const { contests } = await logic.GetContests();
+      setContests([contests, ...contest]);
+    } catch (e) {
+      toastError("error : " + e);
+    }
+
     setIsContestsLoaded(true);
+  };
+
+  // To get Particular Contest in contest.jsx
+  const getPContest = async (contestId) => {
+    try {
+      const { contests } = await logic.GetContests();
+      setContests([contests, ...contest]);
+      const { name, description, entries, endTime } = contests[contestId];
+      setPContestDetails({
+        name: name,
+        desc: description,
+        endTime: endTime,
+        entries: entries,
+      })
+    }
+    catch (e) {
+      toastError("error : " + e);
+    }
   };
 
   const handleCreateContest = async (contestName, contestDescription, durationInSeconds) => {
@@ -65,13 +89,12 @@ function App() {
   };
 
   const handleSubmitEntry = async (entryName, contestId) => {
-    console.log("contest id ----> ^^" + contestId + " " + entryName +  "^^ <-----")
+
     try {
       if (!wallet) return showConnectModal(true);
       await logic.SubmitEntry(wallet, contestId, entryName);
-      console.log("Entry Submitted Successfully" + "id : " + contestId);
+      toastSuccess("Entry Submitted Successfully")
     } catch (error) {
-      console.log("** " + error + "id : " + contestId);
       toastError(error.message);
     }
   };
@@ -81,45 +104,60 @@ function App() {
       if (!wallet) return showConnectModal(true);
 
       await logic.VoteForEntry(wallet, id, name);
+      toastSuccess("Voted Successfully");
     } catch (error) {
       toastError(error.message);
     }
   };
   const handleDeclareWinner = async (id) => {
     try {
+
       if (!wallet) return showConnectModal(true);
-
-      const winner = await logic.GetWinner(id);
-      const { entryName } = winner;
-
-console.log(entryName);
-      toastSuccess(entryName + " has won this contest");
+      const currWinner = await logic.GetWinner(id);
+      const { entryName } = currWinner;
+      console.log(entryName);
+      if(entryName) {
+        console.log(entryName);
+        setShowWinner(true);
+        setWinner(entryName);
+        toastSuccess(entryName + " has won this contest");
+      }
     } catch (error) {
-      toastError(error.message);
+
+      toastError("Contest is not ended or There is not enough Entries");
     }
   }
-  // const formatTime = (seconds) => {
-  //   const date = new Date(seconds * 1000);
-  //   const hours = date.getHours();
-  //   const minutes = "0" + date.getMinutes();
-  //   const formattedTime = hours + ':' + minutes.substr(-2);
-  //   return formattedTime;
-  // };
 
   return (
-    <>
+    <div>
       <Navbar
         updateWallet={updateWallet}
         wallet={wallet}
         showConnectModal={showConnectModal}
       />
       <Toaster />
+      <div>
+        <div class="blob-c">
+          <div class="shape-blob"></div>
+          <div class="shape-blob one"></div>
+          <div class="shape-blob two"></div>
+          <div class="shape-blob three"></div>
+          <div class="shape-blob four"></div>
+          <div class="shape-blob five"></div>
+          <div class="shape-blob six"></div>
+        </div>
+      </div>
       <ConnectModal
         isModalOpen={isModalOpen}
         showConnectModal={showConnectModal}
         updateWallet={updateWallet}
       />
 
+      {/* This will be called when the winner is declared */}
+      {showWinner && 
+      <WinnerCard winner={winner} setShowWinner={setShowWinner}/>}
+
+      {/* This are all the available Routes : */}
       <Routes>
         <Route path="/" element={<Home />} />
 
@@ -130,84 +168,25 @@ console.log(entryName);
             contests={contest}
             wallet={wallet}
             showConnectModal={showConnectModal}
-            setPContestDetails={setPContestDetails}
           />} />
         )}
         {isContestsLoaded && (
           <Route path="contests/:contestId" element={<Contest
             pContestDetails={pContestDetails}
+            getPContest={getPContest}
             handleSubmitEntry={handleSubmitEntry}
             handleVoteForEntry={handleVoteForEntry}
             handleDeclareWinner={handleDeclareWinner}
+            wallet={wallet}
+            showConnectModal={showConnectModal}
           />} />
         )}
-        
+
         {/* Change this show something else when a page is loading. */}
         <Route path="*" element={<Spinner />} />
       </Routes>
-
-    </>
+    </div>
   );
 }
 
 export default App;
-
-// const handleCreateContest = async (contestName, durationInSeconds) => {
-//   try {
-//     const { createdContest } = await logic.CreateContest(
-//       wallet,
-//       contestName,
-//       durationInSeconds
-//     );
-
-//     // setContests([createdContest, ...contest]);
-//     console.log(" ** " + createdContest + " **");
-//     toastSuccess("Contest Created successfully");
-//     console.log("Contest Created successfully !!!");
-//   } catch (error) {
-//     toastError(error.message);
-//     console.log("Contest not Created !!! : " + error);
-//   }
-// };
-// const handleSubmitEntry = async (Name, contestId) => {
-//   try {
-//     if (contestId >= contest.size) {
-//       toastError("Enter a valid Contest Id");
-//       console.log("Enter a valid Contest Id");
-//     }
-//     const createdEntry = await logic.SubmitEntry(wallet, contestId, Name);
-//     contest[contestId].entries.push(createdEntry);
-//     toastSuccess("Entry Submitted successfully");
-//   } catch (error) {
-//     toastError(error.message);
-//   }
-// };
-// const getContest = async () => {
-//   try {
-//     let { currContests } = await logic.GetContests();
-//     setContests(currContests);
-//     console.log(contest);
-//   } catch (error) {
-//     console.log("error" + error.message);
-//     toastError(error.message);
-//   }
-// };
-
-{/* Remove Testers */ }
-{/* <div className="p-12">
-
-        <button className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none" onClick={handleCreateContest}>
-          Create Dummy Contest
-        </button>
-      </div>
-      <div className="p-12">
-
-        <button className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none" onClick={handleSubmitEntry}>
-          Submit Dummy Entry
-        </button>
-      </div>
-      <div className="p-12">
-        <button className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none" onClick={handleVoteForEntry}>
-          Dummy Voter
-        </button>
-      </div> */}

@@ -1,21 +1,10 @@
-import ClipLoader from "react-spinners/ClipLoader";
+import React from 'react';
 
-const Loader = ({ cssOverride, size, color, loading }) => {
+const Loader = () => {
   return (
-    <ClipLoader
-      color={color || "#fbd77a"}
-      loading={loading || false}
-      cssOverride={
-        cssOverride || {
-          display: "block",
-          margin: "0 auto",
-          borderColor: "fbd77a",
-        }
-      }
-      size={size || 18}
-      aria-label="Loading Spinner"
-      data-testid="loader"
-    />
+    <div className="flex justify-center items-center ">
+      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+    </div>
   );
 };
 
