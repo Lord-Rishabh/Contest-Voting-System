@@ -5,7 +5,7 @@ import moiLottie from "../lotties/moiLottie.json";
 const Home = () => {
   return (
     <>
-      <div className="flex flex-col content-center mt-[3rem] max-md:p-2">
+      <div className="flex flex-col content-center mt-[2rem] max-md:p-2">
         <h1 className=" text-center animate-charcter max-md:text-2xl">Welcome to dVote</h1>
         <h3 className="text-center max-md:text-xl">Decentralized Blockchain Based Voting Platform</h3>
       </div>

@@ -21,7 +21,9 @@ const Contests = ({ contests, wallet, showConnectModal, setPContestDetails }) =>
             <div className="px-6 py-4">
               <h2 className="text-2xl max-md:text-xl font-bold text-white mb-2">Contest ID: {contest.id}</h2>
               <h3 className="text-xl max-md:text-base font-semibold text-white mb-2">Name: {contest.name}</h3>
-              <p className="text-gray-400 text-lg max-md:text-sm mb-2">Description: {contest.description}</p>
+              <p className="text-gray-400 text-lg max-md:text-sm mb-2">Description: {contest.description && contest.description.length > 30
+                ? `${contest.description.slice(0, 30)}...`
+                : contest.description}</p>
               <p className="text-gray-400 text-lg max-md:text-sm">End Time: {formatTime(contest.endTime)}</p>
               <button className="px-4 py-2 neonbutton text-white rounded-md hover:bg-purple-700 focus:outline-none " onClick={() => handleSubmitEntry(contest.id)} >
                 Go to Voting
@@ -34,13 +36,21 @@ const Contests = ({ contests, wallet, showConnectModal, setPContestDetails }) =>
   );
 };
 
+
 // Function to format time
 const formatTime = (seconds) => {
   const date = new Date(seconds * 1000);
-  const hours = date.getHours();
+  const year = date.getFullYear();
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  let hours = date.getHours();
   const minutes = "0" + date.getMinutes();
-  const formattedTime = hours + ':' + minutes.substr(-2);
-  return formattedTime;
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // Handle midnight (0 hours)
+  const formattedDate = `${day < 10 ? '0' + day : day}-${month < 10 ? '0' + month : month}-${year} `;
+  const formattedTime = hours + ':' + minutes.substr(-2) + ' ' + ampm;
+  return `${formattedTime}  ${formattedDate} `;
 };
 
 export default Contests;

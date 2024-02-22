@@ -115,13 +115,12 @@ function App() {
       if (!wallet) return showConnectModal(true);
       const currWinner = await logic.GetWinner(id);
       const { entryName } = currWinner;
-      console.log(entryName);
       if(entryName) {
-        console.log(entryName);
         setShowWinner(true);
         setWinner(entryName);
         toastSuccess(entryName + " has won this contest");
       }
+      else toastError("No Winner for this contest");
     } catch (error) {
 
       toastError("Contest is not ended or There is not enough Entries");
@@ -137,14 +136,14 @@ function App() {
       />
       <Toaster />
       <div>
-        <div class="blob-c">
-          <div class="shape-blob"></div>
-          <div class="shape-blob one"></div>
-          <div class="shape-blob two"></div>
-          <div class="shape-blob three"></div>
-          <div class="shape-blob four"></div>
-          <div class="shape-blob five"></div>
-          <div class="shape-blob six"></div>
+        <div className="blob-c">
+          <div className="shape-blob"></div>
+          <div className="shape-blob one"></div>
+          <div className="shape-blob two"></div>
+          <div className="shape-blob three"></div>
+          <div className="shape-blob four"></div>
+          <div className="shape-blob five"></div>
+          <div className="shape-blob six"></div>
         </div>
       </div>
       <ConnectModal
