@@ -1,6 +1,6 @@
 # Contest Voting System using MOI Token
 
-![Contest Voting System](images/contest-voting-system.png)
+![Contest Voting System](image.png)
 
 ## Overview
 
