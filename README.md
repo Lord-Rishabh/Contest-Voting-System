@@ -24,7 +24,7 @@ The Contest Voting System using MOI Token is a decentralized application designe
 
 ### Prerequisites
 
-- **MOI Account:** Users need to have a [iomi.ai](https://iomi.ai) to participate in the voting process. Ensure that you have a wallet set up.
+- **MOI Account:** Users need to have a [iome.ai](https://iome.ai) to participate in the voting process. Ensure that you have a wallet set up.
 
 ### Installation
 
