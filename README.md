@@ -29,3 +29,26 @@ The Contest Voting System using MOI Token is a decentralized application designe
 1. Clone the repository:
    ```bash
    git clone https://github.com/your-username/contest-voting-moi-token.git
+2. Navigate to the project directory:
+   ```bash
+   cd contest-voting-moi-token
+3. Install dependencies:
+   ```bash
+   npm install
+
+## Usage
+1. Configure Smart Contracts: Set up the smart contracts on the blockchain network of your choice. Update the contract addresses in the configuration file.
+
+2. Run the Application: Execute the application using the command:
+   ```bash
+   npm start
+
+3. Create Contests: Organizers can log in, create contests, and specify the details of each contest.
+
+## Contributing
+
+We welcome contributions from the community. If you have suggestions or would like to report issues, please create a GitHub issue or submit a pull request.
+
+5. Vote: Participants can authenticate using their MOI Token wallet and cast their votes for their preferred entries.
+
+6. View Results: Real-time results are available for both participants and organizers.
