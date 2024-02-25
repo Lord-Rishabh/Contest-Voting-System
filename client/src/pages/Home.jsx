@@ -19,9 +19,9 @@ const Home = () => {
               className="px-4 py-2 max-md:mt-4 max-md:mx-2 mr-12 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none transition-transform duration-450 hover:transform hover:scale-105 max-md:text-sm "
             >Create your Contest</button>
           </Link>
-          <Link to="contests" className="text-lg font-semibold transition-transform duration-450 hover:transform hover:scale-105">
+          <Link to="contests" className="text-lg font-semibold transition-transform duration-450 hover:transform hover:scale-105 max-md:text-sm max-md:mt-4">
             <button
-              className="px-4 py-2 neonbuttonn rounded-lg text-white hover:bg-gray-500 focus:outline-none"
+              className="px-4 py-2 neonbuttonn rounded-lg text-white hover:bg-gray-500 focus:outline-none "
             >View all Contests</button>
           </Link>
         </div>
