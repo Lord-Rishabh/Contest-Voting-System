@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DashboardStatGrid from "./DashboardStatGrid";
 import TransactionChart from "./TransactionChart";
-import PieChart from "./PieChart";
 import Spinner from '../components/Spinner';
 import { useParams } from 'react-router-dom';
 
