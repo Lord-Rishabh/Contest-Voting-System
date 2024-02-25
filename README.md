@@ -1,4 +1,4 @@
-Contest Voting System using MOI Token
+#Contest Voting System using MOI Token
 Overview
 The Contest Voting System using MOI Token is a decentralized application designed to facilitate fair and transparent voting in various contests. This system leverages the MOI Token, a blockchain-based digital asset, to ensure the integrity and security of the voting process.
 
