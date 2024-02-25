@@ -1,4 +1,4 @@
-# Contest Voting System using MOI Token
+# Contest Voting System
 
 ![Contest Voting System](image.png)
 
