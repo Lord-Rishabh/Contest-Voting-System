@@ -34,13 +34,12 @@ const ConnectModal = ({ isModalOpen, updateWallet, showConnectModal }) => {
   return (
     <>
       {isModalOpen && (
-        <div className="inset-0 z-50 flex justify-center items-start p-4 overflow-hidden fixed text-black">
-          <div className="bg-white rounded-lg p-8 shadow-md w-full md:w-3/4 lg:w-2/4 mt-20">
-            <div className="text-black">Enter your Mnemonic here </div>
-            <h2 className="text-2xl font-semibold ">Enter Mnemonic</h2>
+        <div className="inset-0 z-50 flex justify-center items-start p-10 overflow-hidden fixed text-white">
+          <div className="bg-white cards rounded-[20px] p-8 shadow-md w-full md:w-3/4 lg:w-2/4 mt-20 transition delay-150 duration-300 ease-in-out">
+            <div className="text-gray mb-5">Enter your Mnemonic</div>
             <input
               type="text"
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-purple-500"
+              className="w-full border border-gray-300 text-black rounded-lg px-3 py-2 focus:outline-none focus:border-purple-500"
               placeholder="mnemonic"
               value={mnemonic}
               onChange={(e) => setMnemonic(e.target.value)}
@@ -50,13 +49,13 @@ const ConnectModal = ({ isModalOpen, updateWallet, showConnectModal }) => {
             )}
             <div className="flex justify-end mt-4">
               <button
-                className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none"
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none"
                 onClick={() => handleConnect(mnemonic)}
               >
                 Connect
               </button>
               <button
-                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md ml-4 hover:bg-gray-400 focus:outline-none"
+                className="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg ml-4 hover:bg-gray-400 focus:outline-none"
                 onClick={handleCancel}
               >
                 Cancel

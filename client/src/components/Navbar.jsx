@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { truncateStr } from "./utils/truncateStr";
 import { Link } from "react-router-dom";
 
-const Navbar = ({ updateWallet, showConnectModal, wallet }) => {
+const Navbar = ({ updateWallet, showConnectModal, wallet, loading }) => {
   const [toggleValue, setToggle] = useState(false);
 
   const navRef = useRef(null);
@@ -37,8 +37,10 @@ const Navbar = ({ updateWallet, showConnectModal, wallet }) => {
           <div></div>
           <div></div>
         </div>
-        <div className="navbar__logo" href="/">
-          d<span className="text-[#b95ce0]">Vote</span>
+        <div className="navbar__logo " href="/"><Link to="/" className="text-5xl ">
+
+          <span className="text-white">d</span><span className="text-[#b95ce0] text-5xl">Vote</span>
+        </Link>
         </div>
       </div>
       <ul
@@ -47,19 +49,12 @@ const Navbar = ({ updateWallet, showConnectModal, wallet }) => {
           (toggleValue && "nav__links nav__links--expanded") || "nav__links"
         }
       >
-        <div className="max-md:flex-col max-md:justify-center max-md:items-center max-md:px-2">
-        <Link to="/" className="text-lg font-semibold">Home</Link>
-        <Link to="create-contest" className="text-lg font-semibold">Create Contest</Link>
-        <Link to="contests" className="text-lg font-semibold">Contests</Link>
-        <a
-          href={"https://moi.technology"}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-lg font-semibold">
-          Built on MOI
-        </a>
+        <div className="max-md:flex-col max-md:justify-center max-md:items-center max-md:px-2 ">
+        <Link to="/" className="text-lg font-semibold transition-transform duration-450 hover:transform hover:scale-105">Home</Link>
+        <Link to="create-contest " className="text-lg font-semibold transition-transform duration-450 hover:transform hover:scale-105">Create Contest</Link>
+        <Link to="contests" className="text-lg font-semibold transition-transform duration-450 hover:transform hover:scale-105">Contests</Link>
         <button
-          className="px-4 py-2 max-md:mt-4 max-md:mx-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none"
+          className="px-4 py-2 max-md:mt-4 max-md:mx-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none transition-transform duration-450 hover:transform hover:scale-105" disabled={loading}
           onClick={wallet ? () => updateWallet() : () => showConnectModal(true)}
         >
           {wallet

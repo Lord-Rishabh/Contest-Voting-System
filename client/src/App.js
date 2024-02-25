@@ -12,20 +12,29 @@ import Contest from "./pages/Contest";
 import WinnerCard from "./components/WinnerCard";
 import logic from "./interface/logic";
 import Spinner from "./components/Spinner";
+import Dashboard from "./components/Dashboard";
 
 function App() {
   const [wallet, setWallet] = useState();
+  const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contest, setContests] = useState([]);
   const [isContestsLoaded, setIsContestsLoaded] = useState(false);
   const [winner, setWinner] = useState("")
   const [showWinner, setShowWinner] = useState(false);
+
   // For particular contest to be shown at contest.jsx
   const [pContestDetails, setPContestDetails] = useState({
     name: "",
     desc: "",
     endTime: "",
     entries: [],
+    winner: "",
+  });
+  const [data, setData] = useState({
+    name: "",
+    full_name: "",
+    votes: "",
   });
 
   useEffect(() => {
@@ -41,6 +50,7 @@ function App() {
 
   // To get all contests
   const getContests = async () => {
+    
     setIsContestsLoaded(false);
     try {
       const { contests } = await logic.GetContests();
@@ -48,12 +58,12 @@ function App() {
     } catch (e) {
       toastError("error : " + e);
     }
-
     setIsContestsLoaded(true);
   };
 
   // To get Particular Contest in contest.jsx
   const getPContest = async (contestId) => {
+    setLoading(true);
     try {
       const { contests } = await logic.GetContests();
       setContests([contests, ...contest]);
@@ -64,13 +74,24 @@ function App() {
         endTime: endTime,
         entries: entries,
       })
+      setData(convertEntriesToData(entries));
     }
     catch (e) {
       toastError("error : " + e);
     }
+    setLoading(false);
+  };
+
+  const convertEntriesToData = (entries) => {
+    return Array.from(entries).map(([entryName, entry], index) => ({
+      name: entryName.substring(0, 4), // Truncated name
+      full_name: entryName, // Full name
+      votes: entry.votes, // Votes
+    }));
   };
 
   const handleCreateContest = async (contestName, contestDescription, durationInSeconds) => {
+    setLoading(true);
     try {
       if (!wallet) return showConnectModal(true);
 
@@ -82,14 +103,17 @@ function App() {
       );
       setContests([createdContest, ...contest]);
       toastSuccess("Contest Created Successfully");
+      const { id } = createdContest;
+      getContests();
+      return id;
     } catch (error) {
       toastError(error.message);
     }
-    getContests();
+    setLoading(false);
   };
 
   const handleSubmitEntry = async (entryName, contestId) => {
-
+    setLoading(true);
     try {
       if (!wallet) return showConnectModal(true);
       await logic.SubmitEntry(wallet, contestId, entryName);
@@ -97,9 +121,11 @@ function App() {
     } catch (error) {
       toastError(error.message);
     }
+    setLoading(false);
   };
 
   const handleVoteForEntry = async (id, name) => {
+    setLoading(true);
     try {
       if (!wallet) return showConnectModal(true);
 
@@ -108,14 +134,16 @@ function App() {
     } catch (error) {
       toastError(error.message);
     }
+    setLoading(false);
   };
-  const handleDeclareWinner = async (id) => {
-    try {
 
+  const handleDeclareWinner = async (id) => {
+    setLoading(true);
+    try {
       if (!wallet) return showConnectModal(true);
       const currWinner = await logic.GetWinner(id);
       const { entryName } = currWinner;
-      if(entryName) {
+      if (entryName) {
         setShowWinner(true);
         setWinner(entryName);
         toastSuccess(entryName + " has won this contest");
@@ -125,27 +153,20 @@ function App() {
 
       toastError("Contest is not ended or There is not enough Entries");
     }
+    setLoading(false);
   }
 
-  return (
+  return (<>
     <div>
+
       <Navbar
         updateWallet={updateWallet}
         wallet={wallet}
         showConnectModal={showConnectModal}
+        loading={loading}
       />
+      
       <Toaster />
-      <div>
-        <div className="blob-c">
-          <div className="shape-blob"></div>
-          <div className="shape-blob one"></div>
-          <div className="shape-blob two"></div>
-          <div className="shape-blob three"></div>
-          <div className="shape-blob four"></div>
-          <div className="shape-blob five"></div>
-          <div className="shape-blob six"></div>
-        </div>
-      </div>
       <ConnectModal
         isModalOpen={isModalOpen}
         showConnectModal={showConnectModal}
@@ -153,20 +174,32 @@ function App() {
       />
 
       {/* This will be called when the winner is declared */}
-      {showWinner && 
-      <WinnerCard winner={winner} setShowWinner={setShowWinner}/>}
+      {showWinner &&
+        <WinnerCard winner={winner} setShowWinner={setShowWinner} />}
 
       {/* This are all the available Routes : */}
       <Routes>
         <Route path="/" element={<Home />} />
 
-        <Route path="create-contest" element={<CreateContest handleCreateContest={handleCreateContest} />} />
+        {isContestsLoaded && (
+          <Route path="contests/:contestId/dashboard" element={<Dashboard
+            data={data}
+            getPContest={getPContest}
+            wallet={wallet}
+            showConnectModal={showConnectModal}
+          />}
+          />)}
+
+        <Route path="create-contest" element={<CreateContest
+          handleCreateContest={handleCreateContest}
+          setLoading={setLoading} />} />
 
         {isContestsLoaded && (
           <Route path="contests" element={<Contests
             contests={contest}
             wallet={wallet}
             showConnectModal={showConnectModal}
+            setIsContestsLoaded={setIsContestsLoaded}
           />} />
         )}
         {isContestsLoaded && (
@@ -184,7 +217,11 @@ function App() {
         {/* Change this show something else when a page is loading. */}
         <Route path="*" element={<Spinner />} />
       </Routes>
+         
+
     </div>
+
+  </>
   );
 }
 
