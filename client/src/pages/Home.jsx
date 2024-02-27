@@ -21,7 +21,7 @@ const Home = () => {
           </Link>
           <Link to="contests" className="text-lg font-semibold transition-transform duration-450 hover:transform hover:scale-105 max-md:text-sm max-md:mt-4">
             <button
-              className="px-4 py-2 neonbuttonn rounded-lg text-white hover:bg-gray-500 focus:outline-none "
+              className="px-4 py-2 neobuttonn rounded-lg text-white hover:bg-gray-500 focus:outline-none "
             >View all Contests</button>
           </Link>
         </div>
