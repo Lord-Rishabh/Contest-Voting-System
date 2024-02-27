@@ -95,6 +95,7 @@ const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handl
       }
       setIsVLoading(false);
       setButtonLoad(false);
+      setVotedEntry("  ");
     }
   };
   const handleWinner = async () => {
@@ -177,7 +178,7 @@ const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handl
                   </div>
 
                   <button
-                    className={` ${(isVLoading || buttonLoad) ? (" bg-black rounded-lg text-black font-semibold px-6 py-2 ") : ("   neobuttonn text-white rounded-lg hover:bg-purple-700 focus:outline-none")} m-3 `} 
+                    className={` ${(isVLoading || buttonLoad) ? ( (entryName===votedEntry) ?  (" bg-black  rounded-lg font-semibold px-6 py-2   ") : ("bg-white text-black rounded-lg font-semibold px-6 py-2 ")  ) : ("   neobuttonn text-white rounded-lg hover:bg-purple-700 focus:outline-none")} m-3 `} 
                     onClick={() => handleVote(entryName)} 
                     disabled={isVLoading || buttonLoad} >
                     
