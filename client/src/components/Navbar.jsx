@@ -54,7 +54,7 @@ const Navbar = ({ updateWallet, showConnectModal, wallet, loading }) => {
         <Link to="create-contest " className="text-lg font-semibold transition-transform duration-450 hover:transform hover:scale-105">Create Contest</Link>
         <Link to="contests" className="text-lg font-semibold transition-transform duration-450 hover:transform hover:scale-105">Contests</Link>
         <button
-          className="px-4 py-2 max-md:mt-4 max-md:mx-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none transition-transform duration-450 hover:transform hover:scale-105" disabled={loading}
+          className={`px-4 py-2 max-md:mt-4 max-md:mx-2 bg-purple-600 text-white rounded-md ${loading ? ("") : ("hover:bg-purple-700 focus:outline-none transition-transform duration-450 hover:transform hover:scale-105")}`} disabled={loading}
           onClick={wallet ? () => updateWallet() : () => showConnectModal(true)}
         >
           {wallet

@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handleDeclareWinner, getPContest, wallet, showConnectModal }) => {
   const navigate = useNavigate();
   const { contestId } = useParams();
+  const [votedEntry, setVotedEntry] = useState(null);
   const [showCreateEntryForm, setShowCreateEntryForm] = useState(false);
   const [entryDetails, setEntryDetails] = useState({
     entryName: "",
@@ -84,6 +85,7 @@ const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handl
     else {
       setButtonLoad(true);
       setIsVLoading(true);
+      setVotedEntry(name);
       try {
         await handleVoteForEntry(contestId, name);
         getContest();
@@ -110,12 +112,12 @@ const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handl
   }
   return (<> {loading ? <Spinner /> : (
     <div className="">
+
       <div className="flex justify-start flex-col items-center rounded-lg p-6 shadow-md space-y-6 ">
         <h2 className="text-2xl font-semibold text-center text-white">Contest Name: <span className="text-purple-400">{pContestDetails.name}</span></h2>
+        <p className="text-lg mb-6 text-gray-300 font-semibold">Contest Start Time: <span className="italic">{formatTime(pContestDetails.startTime)}</span></p>
         <p className="text-lg mb-6 text-gray-300 font-semibold">Contest End Time: <span className="italic">{formatTime(pContestDetails.endTime)}</span></p>
         <p className="text-lg mb-6 text-gray-300 font-semibold">Contest Description: <span className="italic">{pContestDetails.desc}</span></p>
-
-
       </div>
 
 
@@ -135,22 +137,22 @@ const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handl
               onChange={(e) => setSearchQuery(e.target.value)} />
           </div>
 
-          {/* Submit and Declare Winner Button */}
+          {/* Submit, Dashboard and Declare Winner Button */}
           <div className=" flex justify-end space-between">
             <button
               onClick={GoToDashboard}
-              className="flex text-sm md:text-base text-white bg-purple-700 hover:bg-purple-600 focus:bg-purple-700 rounded-md p-3 max-md:ml-0 m-4 transition-transform duration-450 hover:transform hover:scale-105"
+              className={` flex text-sm md:text-base text-white bg-purple-700 hover:bg-purple-600 focus:bg-purple-700 rounded-md p-3 max-md:ml-0 m-4 ${(isELoading || buttonLoad) ? (" ") : ("transition-transform duration-450 hover:transform hover:scale-105 ") } `}
               disabled={isELoading || buttonLoad} >
               Dashboard
             </button>
             <button
-              className="flex justify-between items-center text-sm md:text-base text-white bg-purple-700 hover:bg-purple-600 focus:bg-purple-700 rounded-md p-3 m-4 transition-transform duration-450 hover:transform hover:scale-105" onClick={handleWinner}
+              className={ ` flex justify-between items-center text-sm md:text-base text-white bg-purple-700 hover:bg-purple-600 focus:bg-purple-700 rounded-md p-3 m-4 ${(isWLoading || showCreateEntryForm || buttonLoad) ? (" ") : ("transition-transform duration-450 hover:transform hover:scale-105 ") } `} onClick={handleWinner}
               disabled={isWLoading || showCreateEntryForm || buttonLoad} >
               {isWLoading ? <Loader color={"#000"} loading={isWLoading} /> : 'Declare Winner'}
             </button>
             <button
               onClick={toggleCreateEntryForm}
-              className="flex text-sm md:text-base text-white bg-purple-700 hover:bg-purple-600 focus:bg-purple-700 rounded-md p-3 max-md:ml-0 m-4 transition-transform duration-450 hover:transform hover:scale-105"
+              className={` flex text-sm md:text-base text-white bg-purple-700 hover:bg-purple-600 focus:bg-purple-700 rounded-md p-3 max-md:ml-0 m-4 ${(isWLoading || buttonLoad) ? (" ") : ("transition-transform duration-450 hover:transform hover:scale-105 ") } `}
               disabled={isELoading || buttonLoad} >
               Submit Entry
             </button>
@@ -168,16 +170,19 @@ const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handl
               <div className=""></div> 
               
               : filteredEntries.map(([entryName, entry], index) => (
-                <div className="max-w-md cards rounded-lg overflow-hidden shadow-lg flex-col justify-between items-center transition-transform duration-450 hover:transform hover:scale-105">
+                <div className={`max-w-md cards rounded-lg overflow-hidden shadow-lg flex-col justify-between items-center ${(isVLoading || buttonLoad) ? ("") : ("transition-transform duration-450 hover:transform hover:scale-105")}`}>
                   <div className="px-6 pt-3">
                     <p className='text-lg text-[#bbbec3]'>EntryName : {entryName}</p>
                     <p className='text-lg text-[#bbbec3]'>Votes: {entry.votes}</p>
                   </div>
 
                   <button
-                    className=" px-4 py-2 neonbutton text-white rounded-md hover:bg-purple-700 focus:outline-none m-3"
-                    onClick={() => handleVote(entryName)} disabled={isVLoading || buttonLoad} >
-                    {isVLoading ? <Loader color={"#000"} loading={isVLoading} /> : 'Vote'}
+                    className={` ${(isVLoading || buttonLoad) ? (" bg-white rounded-lg text-black font-semibold px-6 py-2 ") : ("   neobuttonn text-white rounded-lg hover:bg-purple-700 focus:outline-none")} m-3 `} 
+                    onClick={() => handleVote(entryName)} 
+                    disabled={isVLoading || buttonLoad} >
+                    
+                    {isVLoading ? <div className="">{(entryName===votedEntry) ? <Loader color={"#000"} loading={isVLoading} /> : "Vote"}</div> : 'Vote'}
+                  
                   </button>
                 </div>
               ))}

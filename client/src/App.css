@@ -946,6 +946,44 @@ header {
  transition: all 250ms
 }
 
-.neonbuttonn:hover:before {
+.neobuttonn:hover:before {
+  width: 100%;
+}
+
+.neobuttonn {
+  padding: 8px 24px;
+ border: unset;
+ 
+ color: #212121;
+ z-index: 1;
+ background: #e8e8e8;
+ position: relative;
+ font-weight: 1000;
+ -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+ box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+ transition: all 250ms;
+ overflow: hidden;
+}
+
+.neobuttonn:hover {
+  color: #e8e8e8;
+}
+
+.neobuttonn:before {
+  content: "";
+ position: absolute;
+ top: 0;
+ left: 0;
+ height: 100%;
+ width: 0;
+ 
+ background-color: #212121;
+ z-index: -1;
+ -webkit-box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+ box-shadow: 4px 8px 19px -3px rgba(0,0,0,0.27);
+ transition: all 250ms
+}
+
+.neobuttonn:hover:before {
   width: 100%;
 }

@@ -17,11 +17,12 @@ const constructBaseWallet = async () => {
 // baseWallet is only used for get request.
 const baseWallet = await constructBaseWallet();
 
-const CreateContest = async (wallet, name, description, durationInSeconds) => {
+const CreateContest = async (wallet, name, description,startDuration, durationInSeconds) => {
   const logicDriver = await getLogicDriver(logicId, wallet);
   const ixResponse = await logicDriver.routines.CreateContest(
     name,
     description,
+    startDuration,
     durationInSeconds
   );
   return ixResponse.result(); // Returns output
@@ -49,10 +50,6 @@ const GetContests = async () => {
   const logicDriver = await getLogicDriver(logicId, baseWallet);
   return logicDriver.routines.GetContests();
 };
-const GetParticularContest = async (contestId) => {
-  const logicDriver = await getLogicDriver(logicId, baseWallet);
-  return logicDriver.routines.GetParticularContest(contestId);
-};
 const GetWinner = async (contestId) => {
   const logicDriver = await getLogicDriver(logicId, baseWallet);
   return logicDriver.routines.GetWinner(contestId);
@@ -63,7 +60,6 @@ const logic = {
   SubmitEntry,
   VoteForEntry,
   GetContests,
-  GetParticularContest,
   GetWinner,
 };
 

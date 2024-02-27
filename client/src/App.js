@@ -27,6 +27,7 @@ function App() {
   const [pContestDetails, setPContestDetails] = useState({
     name: "",
     desc: "",
+    startTime: "",
     endTime: "",
     entries: [],
     winner: "",
@@ -67,10 +68,11 @@ function App() {
     try {
       const { contests } = await logic.GetContests();
       setContests([contests, ...contest]);
-      const { name, description, entries, endTime } = contests[contestId];
+      const { name, description, entries, startTime, endTime } = contests[contestId];
       setPContestDetails({
         name: name,
         desc: description,
+        startTime: startTime,
         endTime: endTime,
         entries: entries,
       })
@@ -90,7 +92,7 @@ function App() {
     }));
   };
 
-  const handleCreateContest = async (contestName, contestDescription, durationInSeconds) => {
+  const handleCreateContest = async (contestName, contestDescription, startDuration, durationInSeconds) => {
     setLoading(true);
     try {
       if (!wallet) return showConnectModal(true);
@@ -99,6 +101,7 @@ function App() {
         wallet,
         contestName,
         contestDescription,
+        startDuration,
         durationInSeconds
       );
       setContests([createdContest, ...contest]);

@@ -10,6 +10,7 @@ class Contest:
     field creator Address           // Contest creator Address
     field entries Map[String]Entry    // Mapping of entryName=>Votes
     field voters Map[Address]Bool   // Explicitly added to see if the user has already voted
+    field startTime I64               // Start time
     field endTime I64              // Timestamp indicating when the contest ends
     field winner String          // Address of the winning entry's creator (nullable)
     field highestVoted HighestVoted
@@ -32,7 +33,7 @@ endpoint deployer Init!():
     pass
 
 
-endpoint invokable CreateContest!(name String, description String, durationInSeconds I64) -> (createdContest Contest):
+endpoint invokable CreateContest!(name String, description String, startDuration I64, durationInSeconds I64) -> (createdContest Contest):
     var creator = Address(Sender)
     
     // Input Checks
@@ -42,6 +43,8 @@ endpoint invokable CreateContest!(name String, description String, durationInSec
         throw "Description Too Long"
     if(durationInSeconds <= 0 ):
         throw "Invalid duration"
+    if(startDuration >= durationInSeconds):
+        throw "Start Time should be less than End Time"
     var lenOfContests U64
     observe contests <- ContestPlatform.State.contests:
         lenOfContests = len(contests)
@@ -50,6 +53,7 @@ endpoint invokable CreateContest!(name String, description String, durationInSec
         name: name,
         description: description,
         creator: creator,
+        startTime: Env.Timestamp() + startDuration,
         endTime: Env.Timestamp() + durationInSeconds,
     }
    
@@ -82,6 +86,8 @@ endpoint invokable VoteForEntry!(contestId U64, entryName String):
 
     if(contest.endTime < Env.Timestamp()):
         throw "Contest has been Ended" 
+    if(contest.startTime > Env.Timestamp()):
+        throw "Contest has not been Started"
     if(contest.voters[voter]):
         throw "You have already Voted for this Contest"
         
@@ -102,10 +108,6 @@ endpoint invokable VoteForEntry!(contestId U64, entryName String):
 // Get all contests
 endpoint invokable GetContests()->(contests []Contest):
     observe contests <- ContestPlatform.State.contests
-
-endpoint invokable GetParticularContest(contestId U64)->(contest Contest):
-    observe contests <- ContestPlatform.State.contests:
-        contest = contests[contestId]
 
 endpoint invokable GetWinner(contestId U64)->(entryName String):
     var contest Contest

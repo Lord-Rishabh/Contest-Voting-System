@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Loader from '../components/Loader';
 import { useNavigate } from 'react-router-dom';
+import { toastError } from '../components/utils/toastWrapper';
 
 const CreateContest = ({ handleCreateContest, setLoading }) => {
   // Get today's date in the format YYYY-MM-DD for the default value of the date input
@@ -9,23 +10,34 @@ const CreateContest = ({ handleCreateContest, setLoading }) => {
 
   const [contestName, setContestName] = useState('');
   const [contestDescription, setContestDescription] = useState('');
-  const [contestTime, setContestTime] = useState('');
+  const [contestEndTime, setContestEndTime] = useState('');
+  const [contestStartTime, setContestStartTime] = useState('');
   const [contestDate, setContestDate] = useState(today); // Set default date to today
   const [isLoading, setIsLoading] = useState(false);
-  const [redirect, setRedirect] = useState(false);
+  const [redirect, setRedirect] = useState(true);
 
   const handleSubmit = async (e) => {
-   
+
     e.preventDefault();
     setIsLoading(true); // Set loading state to true
     const currentTime = new Date(); // Get the current time
-    const selectedTime = new Date(`${contestDate}T${contestTime}`); // Combine the selected date and time
-    const timeDifferenceInSeconds = Math.floor((selectedTime - currentTime) / 1000); // Calculate the time difference in seconds
-    const contestId = await handleCreateContest(contestName, contestDescription, timeDifferenceInSeconds);
-    setIsLoading(false); // Set loading state to false after contest creation
-    
-    if (redirect && contestId >= 0)
-      navigate(`/contests/${contestId}`);
+    const selectedEndTime = new Date(`${contestDate}T${contestEndTime}`); // Combine the selected date and time
+    const endTimeDifferenceInSeconds = Math.floor((selectedEndTime - currentTime) / 1000); // Calculate the time difference in seconds
+    const selectedStartTime = new Date(`${contestDate}T${contestStartTime}`); // Combine the selected date and time
+    const startTimeDifferenceInSeconds = Math.floor((selectedStartTime - currentTime) / 1000); // Calculate the time difference in seconds
+
+    if (startTimeDifferenceInSeconds > endTimeDifferenceInSeconds) {
+      toastError("Start Time should be less than End Time");
+      setIsLoading(false);
+    }
+    else {
+      const contestId = await handleCreateContest(contestName, contestDescription, startTimeDifferenceInSeconds, endTimeDifferenceInSeconds);
+      setIsLoading(false); // Set loading state to false after contest creation
+
+      if (redirect && contestId >= 0)
+        navigate(`/contests/${contestId}`);
+    }
+
   };
 
   const handleCheckboxChange = (e) => {
@@ -34,7 +46,7 @@ const CreateContest = ({ handleCreateContest, setLoading }) => {
 
   return (<>
     <div className=" text-white flex min-h-[85vh] flex-col items-center sm:justify-center sm:pt-0">
-     
+
       <div className="relative mt-12 w-full max-w-lg sm:mt-10">
         <div className="relative -mb-px h-px w-full bg-gradient-to-r from-transparent via-sky-300 to-transparent"
           bis_skin_checked="1"></div>
@@ -86,20 +98,21 @@ const CreateContest = ({ handleCreateContest, setLoading }) => {
                   </div>
                 </div>
               </div>
+
               <div className="mt-4 flex max-md:flex-col justify-between ">
                 <div className="group relative rounded-lg border focus-within:border-sky-200 px-3 pb-1 pt-1 duration-200 focus-within:ring focus-within:ring-sky-300/30 max-md:mb-4">
-                  <label className="text-base font-medium text-muted-foreground group-focus-within:text-white text-purple-400" htmlFor="contestTime">Contest Time</label>
+                  <label className="text-base font-medium text-muted-foreground group-focus-within:text-white text-purple-400" htmlFor="contestStartTime">Contest Start Time</label>
                   <input
                     className="block w-full border-0 bg-transparent p-0 text-sm file:my-1 placeholder:text-muted-foreground/90 focus:outline-none focus:ring-0 focus:ring-teal-500 sm:leading-7 text-foreground"
-                    id="contestTime"
+                    id="contestStartTime"
                     type="time"
-                    value={contestTime}
-                    onChange={(e) => setContestTime(e.target.value)}
+                    value={contestStartTime}
+                    onChange={(e) => setContestStartTime(e.target.value)}
                     required
                   />
                 </div>
                 <div className=" rounded-lg border focus-within:border-sky-200 px-3 pb-1 pt-1 duration-200 focus-within:ring focus-within:ring-sky-300/30">
-                  <label className="text-base font-medium text-muted-foreground group-focus-within:text-white text-purple-400" htmlFor="contestDate">Contest Date</label>
+                  <label className="text-base font-medium text-muted-foreground group-focus-within:text-white text-purple-400" htmlFor="contestDate">Contest Start Date</label>
                   <input
                     className="block w-full border-0 bg-transparent p-0 text-sm file:my-1 placeholder:text-muted-foreground/90 focus:outline-none focus:ring-0 focus:ring-teal-500 sm:leading-7 text-foreground"
                     type="date"
@@ -109,10 +122,36 @@ const CreateContest = ({ handleCreateContest, setLoading }) => {
                   />
                 </div>
               </div>
+
+              <div className="mt-4 flex max-md:flex-col justify-between ">
+                <div className="group relative rounded-lg border focus-within:border-sky-200 px-3 pb-1 pt-1 duration-200 focus-within:ring focus-within:ring-sky-300/30 max-md:mb-4">
+                  <label className="text-base font-medium text-muted-foreground group-focus-within:text-white text-purple-400" htmlFor="contestEndTime">Contest End Time</label>
+                  <input
+                    className="block w-full border-0 bg-transparent p-0 text-sm file:my-1 placeholder:text-muted-foreground/90 focus:outline-none focus:ring-0 focus:ring-teal-500 sm:leading-7 text-foreground"
+                    id="contestEndTime"
+                    type="time"
+                    value={contestEndTime}
+                    onChange={(e) => setContestEndTime(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className=" rounded-lg border focus-within:border-sky-200 px-3 pb-1 pt-1 duration-200 focus-within:ring focus-within:ring-sky-300/30">
+                  <label className="text-base font-medium text-muted-foreground group-focus-within:text-white text-purple-400" htmlFor="contestDate">Contest End Date</label>
+                  <input
+                    className="block w-full border-0 bg-transparent p-0 text-sm file:my-1 placeholder:text-muted-foreground/90 focus:outline-none focus:ring-0 focus:ring-teal-500 sm:leading-7 text-foreground"
+                    type="date"
+                    value={contestDate}
+                    onChange={(e) => setContestDate(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+
+
               <div className="mt-4 flex items-center justify-between">
                 <label className="flex items-center gap-2">
                   <input type="checkbox" name="remember"
-                    className="outline-none focus:outline focus:outline-sky-300" onChange={handleCheckboxChange} disabled={isLoading} defaultChecked/>
+                    className="outline-none focus:outline focus:outline-sky-300" onChange={handleCheckboxChange} disabled={isLoading} defaultChecked />
                   <span className="text-sm">Redirect me to this Contest Page</span>
                 </label>
 

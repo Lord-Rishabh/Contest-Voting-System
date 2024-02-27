@@ -55,7 +55,12 @@ const Contests = ({ contests, wallet, showConnectModal }) => {
 
               <div className="max-w-md cards rounded-lg shadow-lg mb-8 transition-transform duration-300 hover:transform hover:scale-105">
                 {currentTime < contest.endTime ? (
-                  <span className="absolute top-[-0.3rem] right-[-0.4rem] bg-green-600 text-white text-sm font-medium px-2.5 py-1 rounded">Live</span>
+                  <div className="">
+                  {currentTime > contest.startTime ? 
+                    <span className="absolute top-[-0.3rem] right-[-0.4rem] bg-green-600 text-white text-sm font-medium px-2.5 py-1 rounded">Live</span>
+                    : <span className="absolute top-[-0.3rem] right-[-0.4rem] bg-yellow-600 text-white text-sm font-medium px-2.5 py-1 rounded">Not Started</span>
+                  }
+                  </div>
                 ) : (
                   <span className="absolute top-[-0.3rem] right-[-0.4rem] bg-red-600 text-white text-sm font-medium px-2.5 py-1 rounded">Ended</span>
                 )}
@@ -66,6 +71,7 @@ const Contests = ({ contests, wallet, showConnectModal }) => {
                   <p className="text-gray-400 text-lg max-md:text-sm mb-2">Description: {contest.description && contest.description.length > 30
                     ? `${contest.description.slice(0, 30)}...`
                     : contest.description}</p>
+                  <p className="text-gray-400 text-lg max-md:text-sm mb-1 mt-1">Start Time: {formatTime(contest.startTime)}</p>
                   <p className="text-gray-400 text-lg max-md:text-sm">End Time: {formatTime(contest.endTime)}</p>
                   <button className="px-4 py-2 neonbutton text-white rounded-md hover:bg-purple-700 focus:outline-none" onClick={() => handleOnClick(contest.id)}>
                     Go to Voting
