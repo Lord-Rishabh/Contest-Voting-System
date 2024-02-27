@@ -12,7 +12,8 @@ const CreateContest = ({ handleCreateContest, setLoading }) => {
   const [contestDescription, setContestDescription] = useState('');
   const [contestEndTime, setContestEndTime] = useState('');
   const [contestStartTime, setContestStartTime] = useState('');
-  const [contestDate, setContestDate] = useState(today); // Set default date to today
+  const [contestStartDate, setStartContestDate] = useState(today);
+  const [contestEndDate, setEndContestDate] = useState(today); // Set default date to today
   const [isLoading, setIsLoading] = useState(false);
   const [redirect, setRedirect] = useState(true);
 
@@ -21,12 +22,16 @@ const CreateContest = ({ handleCreateContest, setLoading }) => {
     e.preventDefault();
     setIsLoading(true); // Set loading state to true
     const currentTime = new Date(); // Get the current time
-    const selectedEndTime = new Date(`${contestDate}T${contestEndTime}`); // Combine the selected date and time
+    const selectedEndTime = new Date(`${contestEndDate}T${contestEndTime}`); // Combine the selected date and time
     const endTimeDifferenceInSeconds = Math.floor((selectedEndTime - currentTime) / 1000); // Calculate the time difference in seconds
-    const selectedStartTime = new Date(`${contestDate}T${contestStartTime}`); // Combine the selected date and time
+    const selectedStartTime = new Date(`${contestStartDate}T${contestStartTime}`); // Combine the selected date and time
     const startTimeDifferenceInSeconds = Math.floor((selectedStartTime - currentTime) / 1000); // Calculate the time difference in seconds
 
-    if (startTimeDifferenceInSeconds > endTimeDifferenceInSeconds) {
+    if(selectedStartTime < currentTime) {
+      toastError("Start Time should be greater than current Time");
+      setIsLoading(false);
+    }
+    else if (startTimeDifferenceInSeconds > endTimeDifferenceInSeconds) {
       toastError("Start Time should be less than End Time");
       setIsLoading(false);
     }
@@ -112,12 +117,12 @@ const CreateContest = ({ handleCreateContest, setLoading }) => {
                   />
                 </div>
                 <div className=" rounded-lg border focus-within:border-sky-200 px-3 pb-1 pt-1 duration-200 focus-within:ring focus-within:ring-sky-300/30">
-                  <label className="text-base font-medium text-muted-foreground group-focus-within:text-white text-purple-400" htmlFor="contestDate">Contest Start Date</label>
+                  <label className="text-base font-medium text-muted-foreground group-focus-within:text-white text-purple-400" htmlFor="contestStartDate">Contest Start Date</label>
                   <input
                     className="block w-full border-0 bg-transparent p-0 text-sm file:my-1 placeholder:text-muted-foreground/90 focus:outline-none focus:ring-0 focus:ring-teal-500 sm:leading-7 text-foreground"
                     type="date"
-                    value={contestDate}
-                    onChange={(e) => setContestDate(e.target.value)}
+                    value={contestStartDate}
+                    onChange={(e) => setStartContestDate(e.target.value)}
                     required
                   />
                 </div>
@@ -140,8 +145,8 @@ const CreateContest = ({ handleCreateContest, setLoading }) => {
                   <input
                     className="block w-full border-0 bg-transparent p-0 text-sm file:my-1 placeholder:text-muted-foreground/90 focus:outline-none focus:ring-0 focus:ring-teal-500 sm:leading-7 text-foreground"
                     type="date"
-                    value={contestDate}
-                    onChange={(e) => setContestDate(e.target.value)}
+                    value={contestEndDate}
+                    onChange={(e) => setEndContestDate(e.target.value)}
                     required
                   />
                 </div>
