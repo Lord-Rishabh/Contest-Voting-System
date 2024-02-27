@@ -1,4 +1,4 @@
-# Contest Voting System
+# DVOTE - Contest Voting System
 
 ![Contest Voting System](image.png)
 
