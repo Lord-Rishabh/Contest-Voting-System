@@ -5,7 +5,7 @@ import Loader from '../components/Loader';
 import Spinner from '../components/Spinner';
 import { useNavigate } from 'react-router-dom';
 
-const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handleDeclareWinner, getPContest, wallet, showConnectModal }) => {
+const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, getPContest, wallet, showConnectModal }) => {
   const navigate = useNavigate();
   const { contestId } = useParams();
   const [votedEntry, setVotedEntry] = useState(null);
@@ -44,9 +44,6 @@ const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handl
       console.error('Error navigating to dashboard:', error);
     }
   }
-  const handleSearchInputChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
 
   // Filter entries based on the search query
   const filteredEntries = Array.from(pContestDetails.entries).filter(
@@ -59,7 +56,6 @@ const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handl
     else setShowCreateEntryForm(!showCreateEntryForm);
   };
   const handleEntrySumbit = async (e) => {
-
 
     setButtonLoad(true);
     e.preventDefault();
@@ -98,27 +94,26 @@ const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handl
       setVotedEntry("  ");
     }
   };
-  const handleWinner = async () => {
-    setIsWLoading(true);
-    setButtonLoad(true);
-    try {
-      if (!wallet) showConnectModal(true);
-      await handleDeclareWinner(contestId);
-    } catch (e) {
 
-      toastError("Something went wrong");
-    }
-    setIsWLoading(false);
-    setButtonLoad(false);
-  }
   return (<> {loading ? <Spinner /> : (
     <div className="">
 
-      <div className="flex justify-start flex-col items-center rounded-lg p-6 shadow-md space-y-6 ">
-        <h2 className="text-2xl font-semibold text-center text-white">Contest Name: <span className="text-purple-400">{pContestDetails.name}</span></h2>
-        <p className="text-lg mb-6 text-gray-300 font-semibold">Contest Start Time: <span className="italic">{formatTime(pContestDetails.startTime)}</span></p>
-        <p className="text-lg mb-6 text-gray-300 font-semibold">Contest End Time: <span className="italic">{formatTime(pContestDetails.endTime)}</span></p>
-        <p className="text-lg mb-6 text-gray-300 font-semibold">Contest Description: <span className="italic">{pContestDetails.desc}</span></p>
+      <div className="flex justify-start flex-col items-center rounded-lg p-4 shadow-md  ">
+        <h2 className="text-2xl pb-4 font-semibold text-center text-white">Contest Name : <span className="text-purple-400">{pContestDetails.name}</span></h2>
+        <p className="text-lg mb-5 text-white font-semibold">Contest Description : <span className="italic text-gray-400">{pContestDetails.desc}</span></p>
+        <div className="md:flex justify-between mb-1">
+          <p className="text-lg text-white font-semibold">Contest Start Time : <span className="italic text-gray-400">{formatTime(pContestDetails.startTime)} &nbsp;&nbsp;&nbsp;</span></p>
+          <p className="text-lg text-white font-semibold">&nbsp;&nbsp;Contest End Time : <span className="italic text-gray-400">{formatTime(pContestDetails.endTime)}</span></p>
+        </div>
+
+
+        <div className="text-2xl text-white font-bold">
+          {pContestDetails.winner ? (<div className='inline'>
+            {(currentTime > pContestDetails.endTime) ? ("Winner : ") : ("Current Winner : ")}
+          </div>) : ("")}
+          <span className="text-purple-400 ">{pContestDetails.winner}</span>
+        </div>
+
       </div>
 
 
@@ -142,18 +137,13 @@ const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handl
           <div className=" flex justify-end space-between">
             <button
               onClick={GoToDashboard}
-              className={` flex text-sm md:text-base text-white bg-purple-700 hover:bg-purple-600 focus:bg-purple-700 rounded-md p-3 max-md:ml-0 m-4 ${(isELoading || buttonLoad) ? (" ") : ("transition-transform duration-450 hover:transform hover:scale-105 ") } `}
+              className={` flex text-sm md:text-base text-white bg-purple-700 hover:bg-purple-600 focus:bg-purple-700 rounded-md p-3 max-md:ml-0 m-4 ${(isELoading || buttonLoad) ? (" ") : ("transition-transform duration-450 hover:transform hover:scale-105 ")} `}
               disabled={isELoading || buttonLoad} >
               Dashboard
             </button>
             <button
-              className={ ` flex justify-between items-center text-sm md:text-base text-white bg-purple-700 hover:bg-purple-600 focus:bg-purple-700 rounded-md p-3 m-4 ${(isWLoading || showCreateEntryForm || buttonLoad) ? (" ") : ("transition-transform duration-450 hover:transform hover:scale-105 ") } `} onClick={handleWinner}
-              disabled={isWLoading || showCreateEntryForm || buttonLoad} >
-              {isWLoading ? <Loader color={"#000"} loading={isWLoading} /> : 'Declare Winner'}
-            </button>
-            <button
               onClick={toggleCreateEntryForm}
-              className={` flex text-sm md:text-base text-white bg-purple-700 hover:bg-purple-600 focus:bg-purple-700 rounded-md p-3 max-md:ml-0 m-4 ${(isWLoading || buttonLoad) ? (" ") : ("transition-transform duration-450 hover:transform hover:scale-105 ") } `}
+              className={` flex text-sm md:text-base text-white bg-purple-700 hover:bg-purple-600 focus:bg-purple-700 rounded-md p-3 max-md:ml-0 m-4 ${(isWLoading || buttonLoad) ? (" ") : ("transition-transform duration-450 hover:transform hover:scale-105 ")} `}
               disabled={isELoading || buttonLoad} >
               Submit Entry
             </button>
@@ -166,27 +156,27 @@ const Contest = ({ pContestDetails, handleSubmitEntry, handleVoteForEntry, handl
 
             {/* Entry Card */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredEntries.length === 0 ? 
+              {filteredEntries.length === 0 ?
 
-              <div className=""></div> 
-              
-              : filteredEntries.map(([entryName, entry], index) => (
-                <div className={`max-w-md cards rounded-lg overflow-hidden shadow-lg flex-col justify-between items-center ${(isVLoading || buttonLoad) ? ("") : ("transition-transform duration-450 hover:transform hover:scale-105")}`}>
-                  <div className="px-6 pt-3">
-                    <p className='text-lg text-[#bbbec3]'>EntryName : {entryName}</p>
-                    <p className='text-lg text-[#bbbec3]'>Votes: {entry.votes}</p>
+                <div className=""></div>
+
+                : filteredEntries.map(([entryName, entry], index) => (
+                  <div className={`max-w-md cards rounded-lg overflow-hidden shadow-lg flex-col justify-between items-center ${(isVLoading || buttonLoad) ? ("") : ("transition-transform duration-450 hover:transform hover:scale-105")}`}>
+                    <div className="px-6 pt-3">
+                      <p className='text-lg text-[#bbbec3]'>EntryName : {entryName}</p>
+                      <p className='text-lg text-[#bbbec3]'>Votes: {entry.votes}</p>
+                    </div>
+
+                    <button
+                      className={` ${(isVLoading || buttonLoad) ? ((entryName === votedEntry) ? (" bg-black  rounded-lg font-semibold px-6 py-2   ") : ("bg-white text-black rounded-lg font-semibold px-6 py-2 ")) : ("   neobuttonn text-white rounded-lg hover:bg-purple-700 focus:outline-none")} m-3 `}
+                      onClick={() => handleVote(entryName)}
+                      disabled={isVLoading || buttonLoad} >
+
+                      {isVLoading ? <div className="">{(entryName === votedEntry) ? <Loader color={"#000"} loading={isVLoading} /> : "Vote"}</div> : 'Vote'}
+
+                    </button>
                   </div>
-
-                  <button
-                    className={` ${(isVLoading || buttonLoad) ? ( (entryName===votedEntry) ?  (" bg-black  rounded-lg font-semibold px-6 py-2   ") : ("bg-white text-black rounded-lg font-semibold px-6 py-2 ")  ) : ("   neobuttonn text-white rounded-lg hover:bg-purple-700 focus:outline-none")} m-3 `} 
-                    onClick={() => handleVote(entryName)} 
-                    disabled={isVLoading || buttonLoad} >
-                    
-                    {isVLoading ? <div className="">{(entryName===votedEntry) ? <Loader color={"#000"} loading={isVLoading} /> : "Vote"}</div> : 'Vote'}
-                  
-                  </button>
-                </div>
-              ))}
+                ))}
             </div>
 
           </div>

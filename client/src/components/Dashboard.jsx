@@ -4,7 +4,7 @@ import TransactionChart from "./TransactionChart";
 import Spinner from '../components/Spinner';
 import { useParams } from 'react-router-dom';
 
-const Dashboard = ({ data, getPContest, wallet, showConnectModal }) => {
+const Dashboard = ({ data, getPContest }) => {
     const { contestId } = useParams();
     const [totalVotes, setTotalVotes] = useState();
     const getTotalVotes = (data) => {
@@ -26,20 +26,19 @@ const Dashboard = ({ data, getPContest, wallet, showConnectModal }) => {
 
     return (<>{loading ? <Spinner /> : (
         <div className="">
-            {totalVotes==0 ?  
-            
-            <div className="text-xl  p-5 m-12 font-semibold rounded-lg bg-purple-800">Not Enough Votes to show Dashboard</div> 
-            :  
-            <div className="flex flex-col gap-4">
+            {totalVotes == 0 ?
 
-                <DashboardStatGrid data={data} />
-                <div className="flex flex-row gap-4 w-full mt-8 justify-center">
-                    <TransactionChart data={data} />
+                <div className="text-xl  p-5 m-12 font-semibold rounded-lg bg-purple-800">Not Enough Votes to show Dashboard</div>
+                :
+                <div className="flex flex-col gap-4">
+
+                    <DashboardStatGrid data={data} />
+                    <div className="flex flex-row gap-4 w-full mt-8 justify-center">
+                        <TransactionChart data={data} />
+                    </div>
                 </div>
-            </div>
-    }
+            }
         </div>
-
     )}
     </>
     )

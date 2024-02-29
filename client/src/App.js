@@ -9,7 +9,6 @@ import Home from "./pages/Home";
 import CreateContest from "./pages/CreateContest";
 import Contests from "./pages/Contests";
 import Contest from "./pages/Contest";
-import WinnerCard from "./components/WinnerCard";
 import logic from "./interface/logic";
 import Spinner from "./components/Spinner";
 import Dashboard from "./components/Dashboard";
@@ -20,8 +19,7 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [contest, setContests] = useState([]);
   const [isContestsLoaded, setIsContestsLoaded] = useState(false);
-  const [winner, setWinner] = useState("")
-  const [showWinner, setShowWinner] = useState(false);
+
 
   // For particular contest to be shown at contest.jsx
   const [pContestDetails, setPContestDetails] = useState({
@@ -68,13 +66,16 @@ function App() {
     try {
       const { contests } = await logic.GetContests();
       setContests([contests, ...contest]);
-      const { name, description, entries, startTime, endTime } = contests[contestId];
+      const { name, description, entries, startTime, endTime, highestVoted } = contests[contestId];
+      let {entryName} = highestVoted;
+      
       setPContestDetails({
         name: name,
         desc: description,
         startTime: startTime,
         endTime: endTime,
         entries: entries,
+        winner: entryName
       })
       setData(convertEntriesToData(entries));
     }
@@ -86,7 +87,7 @@ function App() {
 
   const convertEntriesToData = (entries) => {
     return Array.from(entries).map(([entryName, entry], index) => ({
-      name: entryName.substring(0, 4), // Truncated name
+      name: entryName.substring(0, 4) + "..", // Truncated name
       full_name: entryName, // Full name
       votes: entry.votes, // Votes
     }));
@@ -140,24 +141,6 @@ function App() {
     setLoading(false);
   };
 
-  const handleDeclareWinner = async (id) => {
-    setLoading(true);
-    try {
-      if (!wallet) return showConnectModal(true);
-      const currWinner = await logic.GetWinner(id);
-      const { entryName } = currWinner;
-      if (entryName) {
-        setShowWinner(true);
-        setWinner(entryName);
-        toastSuccess(entryName + " has won this contest");
-      }
-      else toastError("No Winner for this contest");
-    } catch (error) {
-
-      toastError("Contest is not ended or There is not enough Entries");
-    }
-    setLoading(false);
-  }
 
   return (<>
     <div>
@@ -176,11 +159,6 @@ function App() {
         updateWallet={updateWallet}
       />
 
-      {/* This will be called when the winner is declared */}
-      {showWinner &&
-        <WinnerCard winner={winner} setShowWinner={setShowWinner} />}
-
-      {/* This are all the available Routes : */}
       <Routes>
         <Route path="/" element={<Home />} />
 
@@ -211,7 +189,6 @@ function App() {
             getPContest={getPContest}
             handleSubmitEntry={handleSubmitEntry}
             handleVoteForEntry={handleVoteForEntry}
-            handleDeclareWinner={handleDeclareWinner}
             wallet={wallet}
             showConnectModal={showConnectModal}
           />} />
@@ -220,10 +197,8 @@ function App() {
         {/* Change this show something else when a page is loading. */}
         <Route path="*" element={<Spinner />} />
       </Routes>
-         
 
     </div>
-
   </>
   );
 }
